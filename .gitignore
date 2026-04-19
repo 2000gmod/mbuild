@@ -1,0 +1,5 @@
+build
+installers
+magefiles
+main.go
+*.json

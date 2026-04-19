@@ -81,7 +81,7 @@ Example:
             "auth": "password",
             "password": "12345",
             "keyPath": "",
-            "deployPath": "/home/diego/mbtest",
+            "deployPath": "/home/michael/mbtest",
             "createDeployPath": true,
             "runInstaller": true
         },
@@ -93,7 +93,7 @@ Example:
             "auth": "password",
             "password": "12345",
             "keyPath": "",
-            "deployPath": "/home/diego/mbtest",
+            "deployPath": "/home/miguel/mbtest",
             "createDeployPath": true,
             "runInstaller": true
         }

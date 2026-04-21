@@ -296,12 +296,14 @@ func createInstallers() error {
 
 		logMsgf("INSTALL", "Building installer for target %q.", k)
 
-		err = sh.RunV("ln", binPath, filepath.Join(insPath, "binary"))
+		//err = sh.RunV("ln", binPath, filepath.Join(insPath, "binary"))
+		err = os.Link(binPath, filepath.Join(insPath, "binary"))
 		if err != nil {
 			return err
 		}
 
-		err = sh.RunV("ln", bundlePath, filepath.Join(insPath, "bundle"))
+		//err = sh.RunV("ln", bundlePath, filepath.Join(insPath, "bundle"))
+		err = os.Link(bundlePath, filepath.Join(insPath, "bundle"))
 		if err != nil {
 			return err
 		}

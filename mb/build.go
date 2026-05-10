@@ -296,6 +296,14 @@ func createInstallers() error {
 
 		logMsgf("INSTALL", "Building installer for target %q.", k)
 
+		// --- New: remove any existing stubs so os.Link won't fail ---
+		for _, fname := range []string{"binary", "bundle"} {
+			fpath := filepath.Join(insPath, fname)
+			if err := os.Remove(fpath); err != nil && !os.IsNotExist(err) {
+				return fmt.Errorf("removing old installer artefact %s: %w", fpath, err)
+			}
+		}
+
 		//err = sh.RunV("ln", binPath, filepath.Join(insPath, "binary"))
 		err = os.Link(binPath, filepath.Join(insPath, "binary"))
 		if err != nil {

@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/magefile/mage/mg"
+	"github.com/magefile/mage/sh"
 )
 
 func createBuildDir() error {
@@ -82,4 +83,31 @@ func Example() {
 	encoder := json.NewEncoder(f)
 	encoder.SetIndent("", "\t")
 	encoder.Encode(example)
+}
+
+// Runs a runConfiguration through 'go run'. Selects config 'default' by default.
+func Run(cfg *string) {
+	mg.Deps(loadConfig)
+	var cfgSelector string
+	switch cfg {
+	case nil:
+		cfgSelector = "default"
+	default:
+		cfgSelector = *cfg
+	}
+
+	c, ok := cfgFile.RunConfigs[cfgSelector]
+
+	if !ok {
+		logErrf("ERROR", "Run config %q does not exist.", cfgSelector)
+		return
+	}
+
+	args := []string{"run"}
+	args = append(args, c.GoFlags...)
+	args = append(args, c.MainPackage)
+
+	logMsgf("RUN", "Running config %q.", cfgSelector)
+
+	sh.RunWithV(c.Env, "go", args...)
 }

@@ -39,9 +39,17 @@ type ConfFile struct {
 	BundledPaths   []string `json:"bundledPaths"`
 	InstallersPath string   `json:"installersPath"`
 
+	RunConfigs map[string]RunConfig `json:"runConfigs"`
 	Targets    map[string]Target    `json:"targets"`
 	Hosts      map[string]Host      `json:"hosts"`
 	Installers map[string]Installer `json:"installers"`
+}
+
+type RunConfig struct {
+	Env         map[string]string `json:"env"`
+	GoFlags     []string          `json:"goFlags"`
+	MainPackage string            `json:"mainPackage"`
+	Args        []string          `json:"args"`
 }
 
 type Target struct {

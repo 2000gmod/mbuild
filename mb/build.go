@@ -22,6 +22,11 @@ func deployHost(h string) error {
 	logMsgf("DEPLOY", "Deploying to host %q.", h)
 	host := cfgFile.Hosts[h]
 
+	target, ok := cfgFile.Targets[host.Target]
+	if !ok {
+		return fmt.Errorf("target %q not found for host %q", host.Target, h)
+	}
+
 	var auth goph.Auth
 	switch host.Auth {
 	case "password":
@@ -38,6 +43,29 @@ func deployHost(h string) error {
 	}
 
 	defer client.Close()
+
+	if target.NoInstaller {
+		binaryName := fmt.Sprintf("%s_%s", cfgFile.BinaryName, host.Target)
+		localBinary := filepath.Join(cfgFile.BuildDir, "bin", binaryName)
+		remotePath := filepath.Join(host.DeployPath, binaryName)
+
+		logMsgf("DEPLOY", "Uploading binary (no installer) to %q", h)
+
+		if host.CreateDeployPath {
+			_, err := client.Run(fmt.Sprintf("mkdir -p %s", host.DeployPath))
+			if err != nil {
+				return err
+			}
+		}
+
+		if err := client.Upload(localBinary, remotePath); err != nil {
+			return err
+		}
+		if _, err := client.Run(fmt.Sprintf("chmod +x %s", remotePath)); err != nil {
+			return err
+		}
+		return nil
+	}
 
 	installerName := fmt.Sprintf("install_%s", host.Target)
 
@@ -270,6 +298,10 @@ func createInstallers() error {
 
 	for k, v := range cfgFile.Targets {
 		target := v
+
+		if target.NoInstaller {
+			continue
+		}
 
 		installCfg := cfgFile.Installers[v.Installer]
 		insPath := filepath.Join(cfgFile.BuildDir, installCfg.Path)

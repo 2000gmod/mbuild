@@ -59,6 +59,7 @@ type Target struct {
 	Env           map[string]string `json:"env"`
 	MainPackage   string            `json:"mainPackage"`
 	Installer     string            `json:"installer"`
+	NoInstaller   bool              `json:"noInstaller"`
 }
 
 type Host struct {
